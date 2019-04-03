@@ -15,6 +15,7 @@ firestore.rules
 package-lock.json
 storage.rules
 firestore.indexes.json
+.firebase/hosting*
 
 # Editor directories and files
 .idea

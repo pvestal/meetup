@@ -8,10 +8,12 @@ import {store} from './store'
 import Vuetify from 'vuetify'
 import DateFilter from './filters/date'
 import AlertCmp from './components/shared/alert'
+import editMeetupDialog from './components/Meetup/EditMeetupDialog.vue'
 
 Vue.use(Vuetify)
 Vue.filter('date', DateFilter)
 Vue.component('app-alert', AlertCmp)
+Vue.component('app-edit-meetupDialog', editMeetupDialog )
 Vue.config.productionTip = false
 
 new Vue({
@@ -20,12 +22,12 @@ new Vue({
   render: h => h(App),
   created() {
     firebase.initializeApp({
-    apiKey: "API-KEY",
+    apiKey: "AIzaSyCAK88o-NhGzYyc9WGcyzyaZ16TymNT-BQ",
     authDomain: "this-meetup.firebaseapp.com",
     databaseURL: "https://this-meetup.firebaseio.com",
     projectId: "this-meetup",
-    storageBucket: "this-meetup.appspot.com",
-    messagingSenderId: "SENDERNUMBER"
+    storageBucket: "gs://this-meetup.appspot.com",
+    messagingSenderId: "521348580703"
     })
     
     //check if auth

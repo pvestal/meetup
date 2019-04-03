@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
+import 'firebase/storage'
 
 Vue.use(Vuex)
 
@@ -26,7 +27,7 @@ export const store = new Vuex.Store({
         error: null
   },
   mutations: {
-    createMeetup(state, payload) {
+    PUSH_MEETUP(state, payload) {
       state.loadedMeetups.push(payload)
     },
     SET_LOADED_MEETUPS(state, payload){
@@ -65,25 +66,47 @@ export const store = new Vuex.Store({
       })
     },
     createMeetup({commit, getters}, payload) {
+      commit('SET_LOADING', true)
       //we could also just pass payload
       const meetup = {
         title: payload.title,
         location: payload.location,
-        imageUrl: payload.imageUrl,
+        //imageUrl: payload.imageUrl,
         description: payload.description,
         date: payload.date,
-        creatorId: getters.user.uid
+        creatorId: getters.user.id
       }
+      let imageUrl 
+      let id
+      
       //Reach out to Firebase and store
       firebase.firestore().collection('meetups').add(meetup)
       .then((data) => {
         //console.log(data)
-        const id = data.id
-        //console.log("id is: ", id)
-        commit('createMeetup', {
-          ...meetup,
-          id: id
+        id = data.id
+        return id
+      })
+      .then(id => {
+        const fileName = payload.image.name
+        const ext = fileName.slice(fileName.lastIndexOf('.'))
+        //put the raw image file into firebase storage
+        return firebase.storage().ref('meetups/' + id + '.' + ext).put(payload.image)
+      })
+      .then(fileData => {
+        //return promise to save to firebase
+        return fileData.ref.getDownloadURL()
+      })
+      .then(imageUrl => {
+        //update firestore to include imageUrl
+        return firebase.firestore().collection('meetups').doc(id).update({imageUrl:imageUrl})
+      })
+      .then(() => {
+        commit('PUSH_MEETUP', {
+        ...meetup,
+        imageUrl: imageUrl,
+        id: id
         })
+        commit('SET_LOADING', false)
       })
       .catch((error) => {
         console.log(error)
