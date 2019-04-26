@@ -75,6 +75,7 @@
         methods: {
             onSignOut() {
                 this.$store.dispatch('signOut')
+                this.$router.push('/')
             }
         }
     }
