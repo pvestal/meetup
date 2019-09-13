@@ -8,12 +8,18 @@ import {store} from './store'
 import Vuetify from 'vuetify'
 import DateFilter from './filters/date'
 import AlertCmp from './components/shared/alert'
-import editMeetupDialog from './components/Meetup/EditMeetupDialog.vue'
+import editMeetupDialog from './components/Meetup/Edit/EditMeetupDialog.vue'
+import editMeetupDateDialog from './components/Meetup/Edit/EditMeetupDateDialog.vue'
+import editMeetupTimeDialog from './components/Meetup/Edit/EditMeetupTimeDialog.vue'
+import RegisterDialog from './components/Meetup/Registration/RegisterDialog.vue'
 
 Vue.use(Vuetify)
 Vue.filter('date', DateFilter)
 Vue.component('app-alert', AlertCmp)
 Vue.component('app-edit-meetupDialog', editMeetupDialog )
+Vue.component('app-edit-meetupDateDialog', editMeetupDateDialog )
+Vue.component('app-edit-meetupTimeDialog', editMeetupTimeDialog )
+Vue.component('app-register-meetupDialog', RegisterDialog )
 Vue.config.productionTip = false
 
 new Vue({
@@ -34,6 +40,7 @@ new Vue({
     firebase.auth().onAuthStateChanged((user) => {
       if(user) {
         this.$store.dispatch('autoSignIn', user)
+        this.$store.dispatch('fetchUserData', user)
       }
     })
     //load meetups from firebase
